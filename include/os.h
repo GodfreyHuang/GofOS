@@ -12,4 +12,10 @@ extern void os_init();
 extern void trap_init(void);
 extern void os_switch();
 
+// memory allocator
+extern void *malloc(size_t size);
+extern void free(void *p);
+extern void page_init();
+extern void page_test();
+
 #endif

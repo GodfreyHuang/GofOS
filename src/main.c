@@ -3,6 +3,7 @@
 
 void os_init()
 {
+    page_init();
     user_init();
     trap_init();
     timer_init();
@@ -16,6 +17,10 @@ int main(int argc, char *argv[])
 
     // printf test
     printf("The message of printf, print number %d\n", 100);
+
+    // malloc test
+    page_test();
+    printf("\n\n");
 
     // multitasking test
     int current_task = 0;

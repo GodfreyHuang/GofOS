@@ -1,12 +1,19 @@
 CC = riscv64-unknown-elf-gcc
-CFLAG= -march=rv32ima_zicsr -mabi=ilp32 -T
-BUILD = -I./include -nostdlib -fno-builtin
+INCLUDE = -I./include
+CFLAGS = -mcmodel=medany -march=rv32ima_zicsr -mabi=ilp32 -g -Wall -w
+BUILD = -nostdlib -fno-builtin
+GDB = riscv64-unknown-elf-gdb
 SOURCE = src/
 
-FILES = \
+DIR = ./bin/
+CHECKDIR := $(shell mkdir -p $(DIR))
+
+OBJ = \
 $(SOURCE)boot.s \
 $(SOURCE)switch.s \
 $(SOURCE)sys.s \
+$(SOURCE)mem.s \
+$(SOURCE)alloc.c \
 $(SOURCE)lib.c \
 $(SOURCE)printf.c \
 $(SOURCE)task.c \
@@ -15,28 +22,38 @@ $(SOURCE)usertask.c \
 $(SOURCE)trap.c \
 $(SOURCE)main.c
 
-OUT = os.elf
-LDS = os.ld
-
 QEMU = qemu-system-riscv32
-QFLAG = -nographic -smp 4 -machine virt -bios none -kernel
+QFLAGS = -nographic -smp 4 -machine virt -bios none
+QFLAGS += -drive if=none,format=raw,file=$(DIR)hdd.dsk,id=x0
+QFLAGS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
-DIR = ./bin/
-CHECKDIR := $(shell mkdir -p $(DIR))
+OBJDUMP = riscv64-unknown-elf-objdump
 
-all: $(FILES)
-	$(CHECKDIR)$(CC) $(CFLAG) $(LDS) \
-	-o $(DIR)$(OUT) $(BUILD) $(FILES)
+make: $(DIR)os.elf $(DIR)hdd.dsk
 
-qemu: $(DIR)$(OUT)
+all: clean $(DIR)os.elf $(DIR)hdd.dsk qemu
+
+test: clean $(DIR)os.elf qemu
+
+$(DIR)os.elf: $(OBJ)
+	$(CHECKDIR)$(CC) $(INCLUDE) $(BUILD) $(CFLAGS) -T os.ld -o $(DIR)os.elf $^
+
+$(DIR)hdd.dsk:
+	dd if=/dev/urandom of=$(DIR)hdd.dsk bs=1M count=32
+
+qemu: $(TARGET) $(DIR)hdd.dsk
 	@qemu-system-riscv32 -M ? | grep virt >/dev/null || exit
 	@echo "Press Ctrl-A and then X to exit QEMU"
-	$(QEMU) $(QFLAG) $(DIR)$(OUT)
+	$(QEMU) $(QFLAGS) -kernel $(DIR)os.elf
 
-.PHONY: clean
 clean:
-	rm -f $(DIR)os
-	rm -f $(DIR)*.o
-	rm -f $(DIR)*.out
 	rm -f $(DIR)*.elf
+	rm -f $(DIR)hdd.dsk
 	rm -f *.gch
+
+.PHONY : debug
+debug: clean os.elf hdd.dsk
+	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"
+	@echo "-------------------------------------------------------"
+	@${QEMU} ${QFLAGS} -kernel $(DIR)os.elf -s -S &
+	@${GDB} $(DIR)os.elf -q -x ./gdbinit
