@@ -1,6 +1,6 @@
 /*  This Code derived from RVOS
-*  -- https://github.com/plctlab/riscv-operating-system-mooc
-*/
+ *  -- https://github.com/plctlab/riscv-operating-system-mooc
+ */
 
 #include "os.h"
 
@@ -33,15 +33,15 @@ static uint32_t _num_pages = 0;
 #define pageNum(x) ((x) / ((PAGE_SIZE) + 1)) + 1
 
 /*
- * Page Descriptor 
+ * Page Descriptor
  * flags:
  * - 00: This means this page hasn't been allocated
  * - 01: This means this page was allocated
- * - 11: This means this page was allocated and is the last page of the memory block allocated
+ * - 11: This means this page was allocated and is the last page of the memory
+ * block allocated
  */
 
-struct Page
-{
+struct Page {
     uint8_t flags;
 };
 
@@ -52,12 +52,9 @@ static inline void _clear(struct Page *page)
 
 static inline int _is_free(struct Page *page)
 {
-    if (page->flags & PAGE_TAKEN)
-    {
+    if (page->flags & PAGE_TAKEN) {
         return 0;
-    }
-    else
-    {
+    } else {
         return 1;
     }
 }
@@ -69,12 +66,9 @@ static inline void _set_flag(struct Page *page, uint8_t flags)
 
 static inline int _is_last(struct Page *page)
 {
-    if (page->flags & PAGE_LAST)
-    {
+    if (page->flags & PAGE_LAST) {
         return 1;
-    }
-    else
-    {
+    } else {
         return 0;
     }
 }
@@ -92,11 +86,11 @@ static inline uint32_t _align_page(uint32_t address)
 void page_init()
 {
     _num_pages = (HEAP_SIZE / PAGE_SIZE) - 2048;
-    printf("HEAP_START = %x, HEAP_SIZE = %x, num of pages = %d\n", HEAP_START, HEAP_SIZE, _num_pages);
+    printf("HEAP_START = %x, HEAP_SIZE = %x, num of pages = %d\n", HEAP_START,
+           HEAP_SIZE, _num_pages);
 
-    struct Page *page = (struct Page *)HEAP_START;
-    for (int i = 0; i < _num_pages; i++)
-    {
+    struct Page *page = (struct Page *) HEAP_START;
+    for (int i = 0; i < _num_pages; i++) {
         _clear(page);
         page++;
     }
@@ -120,45 +114,39 @@ void *malloc(size_t size)
 {
     int npages = pageNum(size);
     int found = 0;
-    struct Page *page_i = (struct Page *)HEAP_START;
-    for (int i = 0; i < (_num_pages - npages); i++)
-    {
-        if (_is_free(page_i))
-        {
-        found = 1;
+    struct Page *page_i = (struct Page *) HEAP_START;
+    for (int i = 0; i < (_num_pages - npages); i++) {
+        if (_is_free(page_i)) {
+            found = 1;
 
-        /* 
-                * meet a free page, continue to check if following
-                * (npages - 1) pages are also unallocated.
-                */
+            /*
+             * meet a free page, continue to check if following
+             * (npages - 1) pages are also unallocated.
+             */
 
-        struct Page *page_j = page_i;
-        for (int j = i; j < (i + npages); j++)
-        {
-            if (!_is_free(page_j))
-            {
-            found = 0;
-            break;
+            struct Page *page_j = page_i;
+            for (int j = i; j < (i + npages); j++) {
+                if (!_is_free(page_j)) {
+                    found = 0;
+                    break;
+                }
+                page_j++;
             }
-            page_j++;
-        }
-        /*
-                * get a memory block which is good enough for us,
-                * take housekeeping, then return the actual start
-                * address of the first page of this memory block
-                */
-        if (found)
-        {
-            struct Page *page_k = page_i;
-            for (int k = i; k < (i + npages); k++)
-            {
-            _set_flag(page_k, PAGE_TAKEN);
-            page_k++;
+            /*
+             * get a memory block which is good enough for us,
+             * take housekeeping, then return the actual start
+             * address of the first page of this memory block
+             */
+            if (found) {
+                struct Page *page_k = page_i;
+                for (int k = i; k < (i + npages); k++) {
+                    _set_flag(page_k, PAGE_TAKEN);
+                    page_k++;
+                }
+                page_k--;
+                _set_flag(page_k, PAGE_LAST);
+                return (void *) (_alloc_start + i * PAGE_SIZE);
             }
-            page_k--;
-            _set_flag(page_k, PAGE_LAST);
-            return (void *)(_alloc_start + i * PAGE_SIZE);
-        }
         }
         page_i++;
     }
@@ -172,28 +160,23 @@ void *malloc(size_t size)
 void free(void *p)
 {
     /*
-        * Assert (TBD) if p is invalid
-        */
-    if (!p || (uint32_t)p >= _alloc_end)
-    {
+     * Assert (TBD) if p is invalid
+     */
+    if (!p || (uint32_t) p >= _alloc_end) {
         return;
     }
     /* get the first page descriptor of this memory block */
-    struct Page *page = (struct Page *)HEAP_START;
-    page += ((uint32_t)p - _alloc_start) / PAGE_SIZE;
+    struct Page *page = (struct Page *) HEAP_START;
+    page += ((uint32_t) p - _alloc_start) / PAGE_SIZE;
     /* loop and clear all the page descriptors of the memory block */
-    while (!_is_free(page))
-    {
-        if (_is_last(page))
-        {
-        _clear(page);
-        break;
-        }
-        else
-        {
-        _clear(page);
-        page++;
-        ;
+    while (!_is_free(page)) {
+        if (_is_last(page)) {
+            _clear(page);
+            break;
+        } else {
+            _clear(page);
+            page++;
+            ;
         }
     }
 }

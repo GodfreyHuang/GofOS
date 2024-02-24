@@ -1,3 +1,4 @@
+// Reference: https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/memlayout.h 
 // QEMU UART Setting
 #define UART0 0x10000000L
 
@@ -21,7 +22,7 @@
 
 #define UART_LSR_RX_READY 0x01  // input is waiting to be read from RHR
 #define UART_LSR_EMPTY_MASK \
-    0x40  // LSR Bit 6: 當 LSR 的第六位元為 1 時，代表傳送區為空的，可以傳了
+    0x40  // LSR Bit 6: When LSR Bit 6 is 1, which means Transmitter is empty
           // (Transmitter empty; both the THR and LSR are empty)
 
 #define ReadUART(reg) (*(Reg(reg)))

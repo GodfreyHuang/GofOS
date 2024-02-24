@@ -32,19 +32,19 @@ void os_task1(void)
 void os_task2(void)
 {
     puts("Task2: Created!\n");
-	while(1) {
-		puts("Execute Task2...\n");
-		delay(1000);
-	}
+    while (1) {
+        puts("Execute Task2...\n");
+        delay(1000);
+    }
 }
 
 void os_task3(void)
 {
     puts("Task3: Created!\n");
-	while(1) {
-		puts("Execute Task3...\n");
-		delay(1000);
-	}
+    while (1) {
+        puts("Execute Task3...\n");
+        delay(1000);
+    }
 }
 
 void user_init()

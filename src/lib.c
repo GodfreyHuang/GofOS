@@ -41,7 +41,6 @@ void puts(char *s)
         putc(*s++);
 }
 
-// delay
 void delay(volatile int num)
 {
     num *= 50000;

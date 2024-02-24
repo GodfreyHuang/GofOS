@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
     // multitasking test
     int current_task = 0;
-    int num = 10;
+    int num = 5;
     while (num--) {
         puts("OS: Activate next task\n");
         task_switchTask(current_task);
