@@ -20,6 +20,7 @@ $(SOURCE)task.c \
 $(SOURCE)timer.c \
 $(SOURCE)usertask.c \
 $(SOURCE)trap.c \
+$(SOURCE)lock.c \
 $(SOURCE)main.c
 
 QEMU = qemu-system-riscv32

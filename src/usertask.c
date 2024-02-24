@@ -1,5 +1,8 @@
 #include "os.h"
 
+lock_t lock;
+static int var = 1000;
+
 void os_switch()
 {
     task_switchOS();
@@ -47,11 +50,28 @@ void os_task3(void)
     }
 }
 
+void os_task4(void)
+{
+    puts("Task4: Created!\n");
+    while (1) {
+        for(int i = 0; i < 50; ++i)
+        {
+            lock_acquire(&lock);
+            var += 5;
+            lock_free(&lock);
+            delay(100);
+        }
+        printf("The value of shared_var is: %d\n", var);
+    }
+}
+
 void user_init()
 {
-    // task_create(&os_task0);
-    // task_create(&os_task1);
+    lock_init(&lock);
+    task_create(&os_task0);
+    task_create(&os_task1);
     task_create(&os_task2);
     task_create(&os_task3);
+    task_create(&os_task4);
     printf("User init completed!\n");
 }
