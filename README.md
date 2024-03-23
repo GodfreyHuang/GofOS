@@ -41,6 +41,7 @@ The functions which GofOS have :
 * trap-handler : Using trap-handler to do preemptive
   
 6. Locking
+  
 7. PLIC  
   
 GofOS provide GDB for debug:
