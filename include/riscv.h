@@ -9,6 +9,14 @@
 
 // ref: https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/riscv.h
 
+static inline uint32_t r_tp()
+{
+  uint32_t x;
+  asm volatile("mv %0, tp"
+               : "=r"(x));
+  return x;
+}
+
 // which hart (core) is this?
 static inline uint32_t r_mhartid()
 {

@@ -21,6 +21,7 @@ $(SOURCE)timer.c \
 $(SOURCE)usertask.c \
 $(SOURCE)trap.c \
 $(SOURCE)lock.c \
+$(SOURCE)plic.c \
 $(SOURCE)main.c
 
 QEMU = qemu-system-riscv32

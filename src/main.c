@@ -1,11 +1,35 @@
 #include "os.h"
 #include "riscv.h"
+#include "uart.h"
+
+#define LSR_RX_READY (1 << 0)
+#define EOF 0
+
+void uart_init()
+{
+    /* disable interrupts */
+    WriteUART(ReadUART(IER), 0x00);
+
+    /* Baud rate setting */
+    uint8_t lcr = ReadUART(LCR);
+    WriteUART(ReadUART(LCR), lcr | (1 << 7));
+    WriteUART(ReadUART(UART0 + 0x00), 0x03);
+    WriteUART(ReadUART(UART0 + 0x01), 0x00);
+
+    lcr = 0;
+    WriteUART(ReadUART(LCR), lcr | (3 << 0));
+
+    uint8_t ier = ReadUART(IER);
+    WriteUART(ReadUART(IER), ier | (1 << 0));
+}
 
 void os_init()
 {
+    uart_init();
     page_init();
     user_init();
     trap_init();
+    plic_init();
     timer_init();
     puts("GofOS boot completed!\n\n");
 }

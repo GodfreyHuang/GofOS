@@ -11,6 +11,19 @@ void trap_init()
     w_mstatus(r_mstatus() | MSTATUS_MIE);
 }
 
+// Doing PLIC
+void external_handler()
+{
+    int irq = plic_claim();
+    if (irq == UART0_IRQ)
+        isr();
+    else if (irq)
+        printf("unexpected interrupt irq = %d\n", irq);
+
+    if (irq)
+        plic_complete(irq);
+}
+
 uint32_t trap_handler(uint32_t epc, uint32_t cause)
 {
     uint32_t return_pc = epc;

@@ -47,3 +47,18 @@ void delay(volatile int num)
     while (num--)
         ;
 }
+
+void isr(void)
+{
+    for (;;)
+    {
+        int c = getc();
+        if (c == -1)
+            break;
+        else
+        {
+            putc((char)c);
+            putc('\n');
+        }
+    }
+}

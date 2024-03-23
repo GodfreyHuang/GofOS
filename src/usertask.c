@@ -68,9 +68,9 @@ void os_task4(void)
 void user_init()
 {
     lock_init(&lock);
-    task_create(&os_task0);
-    task_create(&os_task1);
-    task_create(&os_task2);
+    // task_create(&os_task0);
+    // task_create(&os_task1);
+    // task_create(&os_task2);
     task_create(&os_task3);
     task_create(&os_task4);
     printf("User init completed!\n");

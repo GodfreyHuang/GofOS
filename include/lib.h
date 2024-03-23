@@ -26,4 +26,7 @@ extern void sys_timer();
 extern void timer_handler();
 extern void timer_init();
 
+// PLIC
+extern void isr();
+
 #endif

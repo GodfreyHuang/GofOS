@@ -12,6 +12,11 @@ extern void os_init();
 extern void trap_init(void);
 extern void os_switch();
 
+// PLIC
+extern void plic_init();
+extern int plic_claim();
+extern void plic_complete(int);
+
 // memory allocator
 extern void *malloc(size_t size);
 extern void free(void *p);
