@@ -33,15 +33,20 @@ The functions which GofOS have :
 1. gets() : Get the input from Qemu's UART
 2. puts() : Set the output to Qemu's UART
 3. printf() : Using printf() functions to print string
-4. malloc() : Using malloc() to do dynamic memory allocation
+4. malloc() : Using malloc() to do dynamic memory allocation  
   
-5. multitasking
+5. multitasking :  
 * context-switch : Switch different task to operate  
 * timer : Using timer to calculate the time  
 * trap-handler : Using trap-handler to do preemptive
   
 6. Locking  
   
+GofOS provide GDB for debug:
+```
+make debug
+```
+
 ## Reference
 https://ithelp.ithome.com.tw/users/20110850/ironman/3859  
 https://github.com/cccriscv/mini-riscv-os  

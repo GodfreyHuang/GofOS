@@ -32,7 +32,7 @@ OBJDUMP = riscv64-unknown-elf-objdump
 
 make: $(DIR)os.elf $(DIR)hdd.dsk
 
-all: clean $(DIR)os.elf $(DIR)hdd.dsk qemu
+all: $(DIR)os.elf $(DIR)hdd.dsk qemu
 
 test: clean $(DIR)os.elf qemu
 
@@ -53,7 +53,7 @@ clean:
 	rm -f *.gch
 
 .PHONY : debug
-debug: clean os.elf hdd.dsk
+debug: all
 	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"
 	@echo "-------------------------------------------------------"
 	@${QEMU} ${QFLAGS} -kernel $(DIR)os.elf -s -S &
