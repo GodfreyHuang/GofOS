@@ -40,7 +40,7 @@ The functions which GofOS have :
 * timer : Using timer to calculate the time  
 * trap-handler : Using trap-handler to do preemptive
   
-6. Locking  
+6. Locking
 7. PLIC  
   
 GofOS provide GDB for debug:
